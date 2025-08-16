@@ -1,33 +1,31 @@
 package ru.practicum.shareit.item.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
+import static ru.practicum.shareit.common.HttpHeadersConstants.USER_ID_HEADER;
+
+
 @RestController
 @RequestMapping("/items")
+@RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
 
-    public ItemController(ItemService itemService) {
-        this.itemService = itemService;
-    }
-
     @PostMapping
-    public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") Long ownerId,
+    public ItemDto addItem(@RequestHeader(USER_ID_HEADER) Long ownerId,
                            @RequestBody @Valid ItemDto itemDto) {
         return itemService.addItem(itemDto, ownerId);
 
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto editingItem(@RequestHeader("X-Sharer-User-Id") Long ownerId,
+    public ItemDto editingItem(@RequestHeader(USER_ID_HEADER) Long ownerId,
                                @PathVariable Long itemId,
                                @RequestBody ItemDto itemDto) {
         return itemService.editingItem(itemId, itemDto, ownerId);
@@ -39,7 +37,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getItemsByOwner(@RequestHeader("X-Sharer-User-Id") Long ownerId) {
+    public List<ItemDto> getItemsByOwner(@RequestHeader(USER_ID_HEADER) Long ownerId) {
         return itemService.getItemsByOwner(ownerId);
     }
 

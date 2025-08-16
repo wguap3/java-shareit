@@ -1,9 +1,13 @@
 package ru.practicum.shareit.item.repository;
 
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -20,13 +24,19 @@ public class ItemRepository {
         return item;
     }
 
-    public Optional<Item> findById(Long id) {
-        return Optional.ofNullable(items.get(id));
+    public Item findById(Long id) {
+        Item item = items.get(id);
+        if (item == null) {
+            throw new NotFoundException("Вещь с id " + id + " не найдена");
+        }
+        return item;
     }
 
 
     public List<Item> findByOwner(Long ownerId) {
-        return items.values().stream().filter(item -> item.getOwnerId().equals(ownerId)).collect(Collectors.toList());
+        return items.values().stream()
+                .filter(item -> item.getOwnerId().equals(ownerId))
+                .collect(Collectors.toList());
     }
 
     public List<Item> searchAvailableByText(String text) {

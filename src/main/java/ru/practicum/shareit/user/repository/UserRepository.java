@@ -1,6 +1,8 @@
 package ru.practicum.shareit.user.repository;
 
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.exception.EmailAlreadyExistsException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
@@ -9,22 +11,27 @@ import java.util.concurrent.atomic.AtomicLong;
 @Repository
 public class UserRepository {
     private final Map<Long, User> users = new HashMap<>();
+    private final Set<String> emails = new HashSet<>();
     private final AtomicLong idGenerator = new AtomicLong();
 
     public User save(User user) {
+        if (emails.contains(user.getEmail())) {
+            throw new EmailAlreadyExistsException("Email уже используется: " + user.getEmail());
+        }
         if (user.getId() == null) {
             user.setId(idGenerator.incrementAndGet());
         }
         users.put(user.getId(), user);
+        emails.add(user.getEmail());
         return user;
     }
 
     public User findById(Long id) {
-        if (users.containsKey(id)) {
-            return users.get(id);
-        } else {
-            return null;
+        User user = users.get(id);
+        if (user == null) {
+            throw new NotFoundException("Пользователь с id=" + id + " не найден");
         }
+        return user;
     }
 
     public Boolean checkUsers(User user) {
@@ -35,9 +42,6 @@ public class UserRepository {
     }
 
     public User update(User user) {
-        if (checkUsers(user)) {
-            throw new RuntimeException("Пользователь с айди" + user.getId() + "не найден");
-        }
         users.remove(user.getId());
         save(user);
         return user;
@@ -55,6 +59,10 @@ public class UserRepository {
     }
 
     public void deleteById(Long id) {
-        users.remove(id);
+        if (!users.containsKey(id)) {
+            throw new NotFoundException("Пользователь с id=" + id + " не найден");
+        }
+        User user = users.remove(id);
+        emails.remove(user.getEmail());
     }
 }
