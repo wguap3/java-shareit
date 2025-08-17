@@ -3,7 +3,7 @@ package ru.practicum.shareit.item.service;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.UnauthorizedActionException;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.mapper.ItemMapper1;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
@@ -16,17 +16,19 @@ import java.util.stream.Collectors;
 public class ItemServiceImp implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final ItemMapper itemMapper;
 
-    public ItemServiceImp(ItemRepository itemRepository, UserRepository userRepository) {
+    public ItemServiceImp(ItemRepository itemRepository, UserRepository userRepository, ItemMapper itemMapper) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
+        this.itemMapper = itemMapper;
     }
 
     @Override
     public ItemDto addItem(ItemDto itemDto, Long ownerId) {
         User owner = userRepository.findById(ownerId);
-        Item item = ItemMapper1.toItem(itemDto, ownerId);
-        return ItemMapper1.toItemDto(itemRepository.save(item));
+        Item item = itemMapper.toItem(itemDto, ownerId);
+        return itemMapper.toItemDto(itemRepository.save(item));
     }
 
     @Override
@@ -37,22 +39,22 @@ public class ItemServiceImp implements ItemService {
             throw new UnauthorizedActionException("Редактировать может только владелец");
         }
 
-        ItemMapper1.updateItemFromDto(itemDto, existingItem);
+        itemMapper.updateItemFromDto(itemDto, existingItem);
 
-        return ItemMapper1.toItemDto(itemRepository.save(existingItem));
+        return itemMapper.toItemDto(itemRepository.save(existingItem));
     }
 
     @Override
     public ItemDto getItemById(Long itemId) {
         Item item = itemRepository.findById(itemId);
-        return ItemMapper1.toItemDto(item);
+        return itemMapper.toItemDto(item);
     }
 
 
     @Override
     public List<ItemDto> getItemsByOwner(Long ownerId) {
         return itemRepository.findByOwner(ownerId).stream()
-                .map(ItemMapper1::toItemDto)
+                .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 
@@ -60,7 +62,7 @@ public class ItemServiceImp implements ItemService {
     public List<ItemDto> searchItems(String text) {
         return itemRepository.searchAvailableByText(text).stream()
                 .filter(Item::getAvailable)
-                .map(ItemMapper1::toItemDto)
+                .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 

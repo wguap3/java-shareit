@@ -1,7 +1,6 @@
 package ru.practicum.shareit.user.repository;
 
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.exception.EmailAlreadyExistsException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.model.User;
 
@@ -14,10 +13,9 @@ public class UserRepository {
     private final Set<String> emails = new HashSet<>();
     private final AtomicLong idGenerator = new AtomicLong();
 
+
     public User save(User user) {
-        if (emails.contains(user.getEmail())) {
-            throw new EmailAlreadyExistsException("Email уже используется: " + user.getEmail());
-        }
+
         if (user.getId() == null) {
             user.setId(idGenerator.incrementAndGet());
         }
@@ -56,6 +54,10 @@ public class UserRepository {
         return users.values().stream()
                 .filter(u -> u.getEmail().equalsIgnoreCase(email))
                 .findFirst();
+    }
+
+    public Set<String> getEmails() {
+        return new HashSet<>(emails); // возвращаем копию, чтобы нельзя было изменить напрямую
     }
 
     public void deleteById(Long id) {
