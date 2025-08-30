@@ -56,7 +56,6 @@ CREATE INDEX idx_booking_status ON bookings(status);
 CREATE INDEX idx_booking_booker_status_start ON bookings(booker_id, status, start_date);
 CREATE INDEX idx_booking_owner_start_end ON bookings(item_id, start_date, end_date);
 CREATE INDEX idx_item_owner_id ON items(owner_id);
-CREATE INDEX idx_item_name_description ON items USING gin(to_tsvector('english', name || ' ' || description));
 CREATE INDEX idx_comment_item_id ON comments(item_id);
 CREATE INDEX idx_comment_author_id ON comments(author_id);
 
