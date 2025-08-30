@@ -20,6 +20,7 @@ import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -39,12 +40,12 @@ public class ItemServiceImp implements ItemService {
     private final BookingRepository bookingRepository;
     private final ItemMapper itemMapper;
     private final CommentMapper commentMapper;
+    private final UserService userService;
 
     @Override
     @Transactional
     public ItemDto addItem(ItemDto itemDto, Long ownerId) {
-        User owner = userRepository.findById(ownerId)
-                .orElseThrow(() -> new NotFoundException("Пользователь с id=" + ownerId + " не найден"));
+        User owner = userService.findByIdOrThrow(ownerId);
         Item item = itemMapper.toItem(itemDto, ownerId);
         Item saved = itemRepository.save(item);
         return itemMapper.toItemDto(saved);
@@ -53,9 +54,7 @@ public class ItemServiceImp implements ItemService {
     @Override
     @Transactional
     public ItemDto editingItem(Long itemId, ItemDto itemDto, Long ownerId) {
-        Item existingItem = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Вещь с id=" + itemId + " не найдена"));
-
+        Item existingItem = findByIdOrThrow(itemId);
         if (!existingItem.getOwnerId().equals(ownerId)) {
             throw new UnauthorizedActionException("Редактировать может только владелец");
         }
@@ -67,9 +66,7 @@ public class ItemServiceImp implements ItemService {
 
     @Override
     public ItemDto getItemById(Long itemId, Long userId) {
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Вещь с id=" + itemId + " не найдена"));
-
+        Item item = findByIdOrThrow(itemId);
         List<Booking> lastBookings = null;
         List<Booking> nextBookings = null;
 
@@ -111,8 +108,7 @@ public class ItemServiceImp implements ItemService {
     public CommentDto addComment(Long userId, Long itemId, CommentDto commentDto) {
         User author = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found"));
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Item not found"));
+        Item item = findByIdOrThrow(itemId);
 
         boolean hasBooked = bookingRepository.existsByItemIdAndBookerIdAndEndBefore(
                 itemId, userId, LocalDateTime.now());
@@ -124,6 +120,12 @@ public class ItemServiceImp implements ItemService {
         Comment comment = commentMapper.fromDto(commentDto, item, author);
         Comment savedComment = commentRepository.save(comment);
         return commentMapper.toDto(savedComment);
+    }
+
+    @Override
+    public Item findByIdOrThrow(Long itemId) {
+        return itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("Item with id " + itemId + " not found"));
     }
 }
 

@@ -33,9 +33,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto update(Long userId, UserDto userDto) {
-        User existingUser = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь с id=" + userId + " не найден"));
-
+        User existingUser = findByIdOrThrow(userId);
         if (!existingUser.getEmail().equals(userDto.getEmail()) &&
                 userRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new EmailAlreadyExistsException("Email уже используется: " + userDto.getEmail());
@@ -48,8 +46,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь с id=" + userId + " не найден"));
+        User user = findByIdOrThrow(userId);
         return userMapper.toUserDto(user);
     }
 
@@ -63,5 +60,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
+    }
+
+    @Override
+    public User findByIdOrThrow(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
     }
 }
