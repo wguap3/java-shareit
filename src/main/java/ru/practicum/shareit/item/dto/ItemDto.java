@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.request.model.ItemRequest;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ public class ItemDto {
     private String description;
     @NotNull(message = "Поле available не может быть пустым")
     private Boolean available;
+    private Long requestId;
     private BookingInfo lastBooking;
     private BookingInfo nextBooking;
     private List<CommentDto> comments;

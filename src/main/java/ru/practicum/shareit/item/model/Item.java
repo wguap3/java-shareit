@@ -27,6 +27,7 @@ public class Item {
     private Boolean available;
     @Column(name = "owner_id", nullable = false)
     private Long ownerId;
-    @Transient
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "request_id")
     private ItemRequest request;
 }

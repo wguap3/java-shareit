@@ -5,6 +5,7 @@ import org.springframework.data.repository.query.Param;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemShortDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
@@ -29,6 +30,9 @@ public interface ItemMapper {
             @Param("nextBookings") List<Booking> nextBookings,
             List<CommentDto> comments
     );
+
+
+    ItemShortDto toItemShortDto(Item item);
 
     default ItemDto.BookingInfo mapBookingInfo(List<Booking> bookings) {
         if (bookings == null || bookings.isEmpty()) {
