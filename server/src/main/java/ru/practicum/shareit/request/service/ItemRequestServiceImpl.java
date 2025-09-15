@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemShortDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestResponseDto;
@@ -18,8 +17,8 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.service.UserService;
 
-import java.util.Collections;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +36,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     @Transactional
-    public ItemRequestResponseDto createRequest(Long userId, ItemRequestDto requestDto){
+    public ItemRequestResponseDto createRequest(Long userId, ItemRequestDto requestDto) {
         User user = userService.findByIdOrThrow(userId);
         ItemRequest itemRequest = itemRequestMapper.toItemRequest(requestDto);
         itemRequest.setRequester(user);
@@ -65,7 +64,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
 
     @Override
-    public List<ItemRequestResponseDto> getAllRequests(Long userId){
+    public List<ItemRequestResponseDto> getAllRequests(Long userId) {
         userService.findByIdOrThrow(userId);
         List<ItemRequest> userRequests = itemRequestRepository.findByRequesterIdNotOrderByCreatedDesc(userId);
         return userRequests.stream()
@@ -80,7 +79,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     @Transactional
-    public ItemRequestResponseDto getRequestById(Long requestId, Long userId){
+    public ItemRequestResponseDto getRequestById(Long requestId, Long userId) {
         userService.findByIdOrThrow(userId);
         ItemRequest itemRequest = itemRequestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("ItemRequest not found"));

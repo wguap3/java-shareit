@@ -21,16 +21,16 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<Object> addItem(@RequestHeader(USER_ID_HEADER) Long ownerId,
-                                  @RequestBody @Valid ItemDto itemDto) {
-        return itemClient.addItem(ownerId,itemDto);
+                                          @RequestBody @Valid ItemDto itemDto) {
+        return itemClient.addItem(ownerId, itemDto);
 
     }
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<Object> editingItem(@RequestHeader(USER_ID_HEADER) Long ownerId,
-                               @PathVariable Long itemId,
-                               @RequestBody ItemDto itemDto) {
-        return itemClient.editingItem(ownerId,itemId, itemDto);
+                                              @PathVariable Long itemId,
+                                              @RequestBody ItemDto itemDto) {
+        return itemClient.editingItem(ownerId, itemId, itemDto);
     }
 
     @GetMapping("/{itemId}")
@@ -46,8 +46,8 @@ public class ItemController {
 
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<Object> addComment(@RequestHeader(USER_ID_HEADER) Long userId,
-                                 @PathVariable Long itemId,
-                                 @RequestBody @Valid CommentDto commentDto) {
+                                             @PathVariable Long itemId,
+                                             @RequestBody @Valid CommentDto commentDto) {
         return itemClient.addComment(userId, itemId, commentDto);
     }
 

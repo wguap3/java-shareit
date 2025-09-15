@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.shareit.client.BaseClient;
+import ru.practicum.client.BaseClient;
 import ru.practicum.user.dto.UserDto;
 
 @Service
@@ -17,7 +17,7 @@ public class UserClient extends BaseClient {
 
     @Autowired
     public UserClient(@Value("${shareit-server.url}") String serverUrl,
-                         RestTemplateBuilder builder) {
+                      RestTemplateBuilder builder) {
         super(
                 builder
                         .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX))

@@ -5,9 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.booking.BookingClient;
-import ru.practicum.booking.dto.CreateBookingRequestDto;
-import ru.practicum.booking.enums.BookingState;
 import ru.practicum.request.dto.ItemRequestDto;
 
 import static ru.practicum.constants.Headers.USER_ID_HEADER;
@@ -21,7 +18,7 @@ public class RequestController {
 
     @PostMapping
     public ResponseEntity<Object> createRequest(@RequestHeader(USER_ID_HEADER) Long userId,
-                                         @RequestBody @Valid ItemRequestDto requestDto) {
+                                                @RequestBody @Valid ItemRequestDto requestDto) {
         return requestClient.createRequest(userId, requestDto);
     }
 
@@ -38,7 +35,7 @@ public class RequestController {
 
     @GetMapping("/{requestId}")
     public ResponseEntity<Object> getRequestById(@RequestHeader(USER_ID_HEADER) Long userId,
-                                                @PathVariable Long requestId) {
+                                                 @PathVariable Long requestId) {
         return requestClient.getRequestById(userId, requestId);
     }
 }
