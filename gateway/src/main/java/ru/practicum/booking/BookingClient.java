@@ -6,6 +6,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.booking.dto.CreateBookingRequestDto;
 import ru.practicum.booking.enums.BookingState;
@@ -18,6 +19,10 @@ import java.util.Map;
 public class BookingClient extends BaseClient {
 
     private static final String API_PREFIX = "/bookings";
+
+    public BookingClient(RestTemplate restTemplate) {
+        super(restTemplate);
+    }
 
     @Autowired
     public BookingClient(@Value("${shareit-server.url}") String serverUrl,
