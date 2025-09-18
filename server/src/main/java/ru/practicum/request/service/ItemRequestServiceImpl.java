@@ -1,9 +1,9 @@
 package ru.practicum.request.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.item.dto.ItemShortDto;
 import ru.practicum.item.mapper.ItemMapper;
@@ -14,7 +14,6 @@ import ru.practicum.request.mapper.ItemRequestMapper;
 import ru.practicum.request.model.ItemRequest;
 import ru.practicum.request.repository.ItemRequestRepository;
 import ru.practicum.user.model.User;
-import ru.practicum.user.repository.UserRepository;
 import ru.practicum.user.service.UserService;
 
 import java.time.LocalDateTime;
@@ -25,10 +24,8 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
 public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
     private final UserService userService;
     private final ItemRequestRepository itemRequestRepository;
     private final ItemMapper itemMapper;
@@ -49,6 +46,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemRequestResponseDto> getUserRequests(Long userId) {
         userService.findByIdOrThrow(userId);
         List<ItemRequest> userRequests = itemRequestRepository.findByRequesterIdOrderByCreatedDesc(userId);
@@ -64,6 +62,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemRequestResponseDto> getAllRequests(Long userId) {
         userService.findByIdOrThrow(userId);
         List<ItemRequest> userRequests = itemRequestRepository.findByRequesterIdNotOrderByCreatedDesc(userId);
@@ -78,7 +77,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public ItemRequestResponseDto getRequestById(Long requestId, Long userId) {
         userService.findByIdOrThrow(userId);
         ItemRequest itemRequest = itemRequestRepository.findById(requestId)

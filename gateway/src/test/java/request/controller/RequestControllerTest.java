@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.practicum.constants.Headers.USER_ID_HEADER;
 
 @WebMvcTest(RequestController.class)
 @ContextConfiguration(classes = GatewayApp.class)
@@ -54,7 +55,7 @@ class RequestControllerTest {
                 .thenReturn(response);
 
         mockMvc.perform(post("/requests")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(USER_ID_HEADER, userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
@@ -72,7 +73,7 @@ class RequestControllerTest {
         when(requestClient.getUserRequests(userId)).thenReturn(response);
 
         mockMvc.perform(get("/requests")
-                        .header("X-Sharer-User-Id", userId))
+                        .header(USER_ID_HEADER, userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].description").value("Нужна дрель"))
                 .andExpect(jsonPath("$[0].id").value(1L));
@@ -89,7 +90,7 @@ class RequestControllerTest {
         when(requestClient.getAllRequests(userId)).thenReturn(response);
 
         mockMvc.perform(get("/requests/all")
-                        .header("X-Sharer-User-Id", userId))
+                        .header(USER_ID_HEADER, userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2));
     }
@@ -105,7 +106,7 @@ class RequestControllerTest {
         when(requestClient.getRequestById(userId, 1L)).thenReturn(response);
 
         mockMvc.perform(get("/requests/{requestId}", 1L)
-                        .header("X-Sharer-User-Id", userId))
+                        .header(USER_ID_HEADER, userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.description").value("Нужна дрель"))
                 .andExpect(jsonPath("$.id").value(1L));

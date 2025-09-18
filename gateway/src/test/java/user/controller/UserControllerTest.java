@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
-@ContextConfiguration(classes = GatewayApp.class) // укажи главный класс конфигурации Spring Boot
+@ContextConfiguration(classes = GatewayApp.class)
 class UserControllerTest {
 
     @Autowired

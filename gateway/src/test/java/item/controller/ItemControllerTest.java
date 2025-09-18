@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.practicum.constants.Headers.USER_ID_HEADER;
 
 @WebMvcTest(ItemController.class)
 @ContextConfiguration(classes = GatewayApp.class)
@@ -56,7 +57,7 @@ class ItemControllerTest {
         when(itemClient.addItem(eq(userId), any(ItemDto.class))).thenReturn(response);
 
         mockMvc.perform(post("/items")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(USER_ID_HEADER, userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(itemDto)))
                 .andExpect(status().isOk())
@@ -76,7 +77,7 @@ class ItemControllerTest {
         when(itemClient.editingItem(eq(userId), eq(itemId), any(ItemDto.class))).thenReturn(response);
 
         mockMvc.perform(patch("/items/{itemId}", itemId)
-                        .header("X-Sharer-User-Id", userId)
+                        .header(USER_ID_HEADER, userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(itemDto)))
                 .andExpect(status().isOk())
@@ -92,7 +93,7 @@ class ItemControllerTest {
         when(itemClient.getItemById(eq(userId), eq(itemId))).thenReturn(response);
 
         mockMvc.perform(get("/items/{itemId}", itemId)
-                        .header("X-Sharer-User-Id", userId))
+                        .header(USER_ID_HEADER, userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(itemId))
                 .andExpect(jsonPath("$.name").value("Дрель"));
@@ -127,7 +128,7 @@ class ItemControllerTest {
         when(itemClient.addComment(eq(userId), eq(itemId), any(CommentDto.class))).thenReturn(response);
 
         mockMvc.perform(post("/items/{itemId}/comment", itemId)
-                        .header("X-Sharer-User-Id", userId)
+                        .header(USER_ID_HEADER, userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(commentDto)))
                 .andExpect(status().isOk())
@@ -146,7 +147,7 @@ class ItemControllerTest {
         when(itemClient.getAllItemsByOwner(userId)).thenReturn(response);
 
         mockMvc.perform(get("/items")
-                        .header("X-Sharer-User-Id", userId))
+                        .header(USER_ID_HEADER, userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].name").value("Дрель"))

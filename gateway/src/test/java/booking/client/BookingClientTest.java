@@ -2,9 +2,10 @@ package booking.client;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,9 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
+import static ru.practicum.constants.Headers.USER_ID_HEADER;
 
+@ExtendWith(MockitoExtension.class)
 class BookingClientTest {
 
     @Mock
@@ -30,7 +33,6 @@ class BookingClientTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         bookingClient = new BookingClient(restTemplate);
     }
 
@@ -48,7 +50,7 @@ class BookingClientTest {
 
         ArgumentCaptor<HttpEntity<Void>> captor = ArgumentCaptor.forClass(HttpEntity.class);
         verify(restTemplate).exchange(eq("?state={state}"), eq(HttpMethod.GET), captor.capture(), eq(Object.class), eq(Map.of("state", state.name())));
-        assertThat(captor.getValue().getHeaders().getFirst("X-Sharer-User-Id")).isEqualTo(String.valueOf(userId));
+        assertThat(captor.getValue().getHeaders().getFirst(USER_ID_HEADER)).isEqualTo(String.valueOf(userId));
     }
 
     @Test
@@ -65,7 +67,7 @@ class BookingClientTest {
 
         ArgumentCaptor<HttpEntity<CreateBookingRequestDto>> captor = ArgumentCaptor.forClass(HttpEntity.class);
         verify(restTemplate).exchange(eq(""), eq(HttpMethod.POST), captor.capture(), eq(Object.class));
-        assertThat(captor.getValue().getHeaders().getFirst("X-Sharer-User-Id")).isEqualTo(String.valueOf(userId));
+        assertThat(captor.getValue().getHeaders().getFirst(USER_ID_HEADER)).isEqualTo(String.valueOf(userId));
     }
 
     @Test
@@ -121,7 +123,7 @@ class BookingClientTest {
 
         ArgumentCaptor<HttpEntity<Void>> captor = ArgumentCaptor.forClass(HttpEntity.class);
         verify(restTemplate).exchange(eq("/owner?state={state}"), eq(HttpMethod.GET), captor.capture(), eq(Object.class), eq(Map.of("state", state.name())));
-        assertThat(captor.getValue().getHeaders().getFirst("X-Sharer-User-Id")).isEqualTo(String.valueOf(userId));
+        assertThat(captor.getValue().getHeaders().getFirst(USER_ID_HEADER)).isEqualTo(String.valueOf(userId));
     }
 }
 

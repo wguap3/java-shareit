@@ -2,9 +2,10 @@ package request.client;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static ru.practicum.constants.Headers.USER_ID_HEADER;
 
+@ExtendWith(MockitoExtension.class)
 class RequestClientTest {
 
     @Mock
@@ -31,7 +34,6 @@ class RequestClientTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         requestClient = new RequestClient(restTemplate);
     }
 
@@ -52,7 +54,7 @@ class RequestClientTest {
 
         HttpEntity<ItemRequestDto> requestEntity = captor.getValue();
         assertThat(requestEntity.getBody().getDescription()).isEqualTo("Нужна дрель");
-        assertThat(requestEntity.getHeaders().getFirst("X-Sharer-User-Id")).isEqualTo("1");
+        assertThat(requestEntity.getHeaders().getFirst(USER_ID_HEADER)).isEqualTo("1");
     }
 
     @Test
@@ -70,7 +72,7 @@ class RequestClientTest {
         verify(restTemplate).exchange(eq(""), eq(HttpMethod.GET), captor.capture(), eq(Object.class));
 
         HttpEntity<Void> requestEntity = captor.getValue();
-        assertThat(requestEntity.getHeaders().getFirst("X-Sharer-User-Id")).isEqualTo("1");
+        assertThat(requestEntity.getHeaders().getFirst(USER_ID_HEADER)).isEqualTo("1");
     }
 
     @Test
@@ -90,7 +92,7 @@ class RequestClientTest {
         verify(restTemplate).exchange(eq("/all"), eq(HttpMethod.GET), captor.capture(), eq(Object.class));
 
         HttpEntity<Void> requestEntity = captor.getValue();
-        assertThat(requestEntity.getHeaders().getFirst("X-Sharer-User-Id")).isEqualTo("1");
+        assertThat(requestEntity.getHeaders().getFirst(USER_ID_HEADER)).isEqualTo("1");
     }
 
     @Test
@@ -108,6 +110,6 @@ class RequestClientTest {
         verify(restTemplate).exchange(eq("/5"), eq(HttpMethod.GET), captor.capture(), eq(Object.class));
 
         HttpEntity<Void> requestEntity = captor.getValue();
-        assertThat(requestEntity.getHeaders().getFirst("X-Sharer-User-Id")).isEqualTo("1");
+        assertThat(requestEntity.getHeaders().getFirst(USER_ID_HEADER)).isEqualTo("1");
     }
 }

@@ -24,6 +24,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.practicum.constants.Headers.USER_ID_HEADER;
 
 @WebMvcTest(BookingController.class)
 @ContextConfiguration(classes = GatewayApp.class)
@@ -54,7 +55,7 @@ class BookingControllerTest {
         when(bookingClient.createBooking(eq(userId), any(CreateBookingRequestDto.class))).thenReturn(response);
 
         mockMvc.perform(post("/bookings")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(USER_ID_HEADER, userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
                 .andExpect(status().isOk())
@@ -70,7 +71,7 @@ class BookingControllerTest {
         when(bookingClient.approveBooking(userId, bookingId, true)).thenReturn(response);
 
         mockMvc.perform(patch("/bookings/{bookingId}", bookingId)
-                        .header("X-Sharer-User-Id", userId)
+                        .header(USER_ID_HEADER, userId)
                         .param("approved", "true"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(bookingId))
@@ -85,7 +86,7 @@ class BookingControllerTest {
         when(bookingClient.cancelBooking(userId, bookingId)).thenReturn(response);
 
         mockMvc.perform(patch("/bookings/{bookingId}/cancel", bookingId)
-                        .header("X-Sharer-User-Id", userId))
+                        .header(USER_ID_HEADER, userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(bookingId))
                 .andExpect(jsonPath("$.status").value("CANCELED"));
@@ -99,7 +100,7 @@ class BookingControllerTest {
         when(bookingClient.getBooking(userId, bookingId)).thenReturn(response);
 
         mockMvc.perform(get("/bookings/{bookingId}", bookingId)
-                        .header("X-Sharer-User-Id", userId))
+                        .header(USER_ID_HEADER, userId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(bookingId))
                 .andExpect(jsonPath("$.itemId").value(5));
@@ -113,7 +114,7 @@ class BookingControllerTest {
         when(bookingClient.getBookings(userId, BookingState.ALL)).thenReturn(response);
 
         mockMvc.perform(get("/bookings")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(USER_ID_HEADER, userId)
                         .param("stateParam", "ALL"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.total").value(1));
@@ -127,7 +128,7 @@ class BookingControllerTest {
         when(bookingClient.getBookingsByOwner(userId, BookingState.ALL)).thenReturn(response);
 
         mockMvc.perform(get("/bookings/owner")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(USER_ID_HEADER, userId)
                         .param("stateParam", "ALL"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.total").value(2));
