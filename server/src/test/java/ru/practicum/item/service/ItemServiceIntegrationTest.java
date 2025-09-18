@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import ru.practicum.ShareItApp;
 import ru.practicum.booking.model.Booking;
 import ru.practicum.booking.model.BookingStatus;
 import ru.practicum.booking.repository.BookingRepository;
